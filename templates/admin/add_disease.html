@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Disease – Disease Recognition and Test Recommendation System Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f0f5fb;
+      --nav: #0f172a;
+      --nav-sec: #1e293b;
+      --card: #ffffff;
+      --card-alt: #f8fbff;
+      --accent: #0ea5e9;
+      --accent-hover: #0284c7;
+      --accent-light: #38bdf8;
+      --teal: #06b6d4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text: #0f172a;
+      --text-sec: #475569;
+      --text-muted: #64748b;
+      --border: rgba(15, 23, 42, .09);
+      --border-light: rgba(15, 23, 42, .05);
+      --border-accent: rgba(14, 165, 233, .25);
+      --shadow: rgba(15, 23, 42, .07);
+      --shadow-lg: rgba(15, 23, 42, .12);
+      --grad: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+      --grad-nav: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --sidebar-w: 256px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--grad-nav);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, .25);
+      border-right: 1px solid rgba(255, 255, 255, .04);
+    }
+
+    .sidebar-brand {
+      padding: 1.5rem 1.25rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+    }
+
+    .sidebar-brand .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--grad);
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: 0 3px 12px rgba(14, 165, 233, .4);
+    }
+
+    .sidebar-brand .brand-text h5 {
+      font-family: 'Outfit', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .45);
+      margin: 0 0 .1rem;
+    }
+
+    .sidebar-brand .brand-text span {
+      color: white;
+      font-size: .92rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0;
+      flex: 1;
+    }
+
+    .nav-section-label {
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .35);
+      padding: .875rem 1.25rem .3rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .6rem 1.25rem;
+      color: rgba(255, 255, 255, .65);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      transition: all .2s;
+      border-left: 3px solid transparent;
+      margin: .1rem 0;
+    }
+
+    .sidebar-link:hover {
+      color: white;
+      background: rgba(255, 255, 255, .07);
+      border-left-color: rgba(14, 165, 233, .5);
+    }
+
+    .sidebar-link.active {
+      color: white;
+      background: linear-gradient(90deg, rgba(14, 165, 233, .2) 0%, rgba(14, 165, 233, .05) 100%);
+      border-left-color: #0ea5e9;
+    }
+
+    .sidebar-link.active i {
+      color: #38bdf8;
+    }
+
+    .sidebar-link i {
+      font-size: .875rem;
+      width: 16px;
+      text-align: center;
+      color: rgba(255, 255, 255, .45);
+      transition: color .2s;
+    }
+
+    .sidebar-link:hover i {
+      color: rgba(255, 255, 255, .85);
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, .07);
+      margin: .5rem 1.25rem;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, .08);
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .45);
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+    }
+
+    .sidebar-footer .user-avatar {
+      width: 30px;
+      height: 30px;
+      background: var(--grad);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      color: white;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer strong {
+      color: rgba(255, 255, 255, .85);
+    }
+
+    /* Main */
+    .main-area {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: var(--grad-nav);
+      padding: .875rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, .25);
+      border-bottom: 1px solid rgba(255, 255, 255, .05);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .topbar-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .topbar-title i {
+      color: #38bdf8;
+      font-size: .9rem;
+    }
+
+    .topbar-breadcrumb {
+      font-size: .75rem;
+      color: rgba(255, 255, 255, .45);
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: .625rem;
+      align-items: center;
+    }
+
+    .badge-role {
+      background: rgba(14, 165, 233, .2);
+      color: #7dd3fc;
+      padding: .28rem .85rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1px solid rgba(14, 165, 233, .3);
+      display: flex;
+      align-items: center;
+      gap: .375rem;
+    }
+
+    .btn-topbar {
+      background: rgba(255, 255, 255, .1);
+      color: rgba(255, 255, 255, .9);
+      border: 1px solid rgba(255, 255, 255, .15);
+      padding: .4rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-topbar:hover {
+      background: rgba(255, 255, 255, .18);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .content {
+      padding: 2rem;
+      max-width: 800px;
+    }
+
+    /* Form Card */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px var(--shadow);
+      position: relative;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--grad);
+    }
+
+    .form-card-header {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--card-alt);
+    }
+
+    .header-icon {
+      width: 46px;
+      height: 46px;
+      background: var(--grad);
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: white;
+      box-shadow: 0 3px 14px rgba(14, 165, 233, .35);
+      flex-shrink: 0;
+    }
+
+    .form-card-header h5 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .form-card-header p {
+      margin: 0;
+      font-size: .82rem;
+      color: var(--text-muted);
+      margin-top: .2rem;
+    }
+
+    .form-body {
+      padding: 2rem 1.75rem;
+    }
+
+    /* Fields */
+    .field-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--text-muted);
+      margin-bottom: .5rem;
+    }
+
+    label span.req {
+      color: var(--danger);
+      margin-left: 2px;
+    }
+
+    .field-input {
+      width: 100%;
+      background: white;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      color: var(--text);
+      padding: .75rem 1rem;
+      font-size: .95rem;
+      font-family: 'Inter', sans-serif;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .field-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, .12);
+    }
+
+    .field-input::placeholder {
+      color: #94a3b8;
+    }
+
+    textarea.field-input {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .field-input.invalid {
+      border-color: var(--danger) !important;
+    }
+
+    .field-error {
+      font-size: .76rem;
+      color: var(--danger);
+      margin-top: .35rem;
+      display: none;
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    /* Tag Input */
+    .tag-input-wrap {
+      background: white;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: .5rem .75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      align-items: center;
+      cursor: text;
+      transition: border-color .2s, box-shadow .2s;
+      min-height: 52px;
+    }
+
+    .tag-input-wrap.focused {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, .12);
+    }
+
+    .tag-input-wrap.invalid {
+      border-color: var(--danger) !important;
+    }
+
+    .symptom-tag {
+      background: linear-gradient(135deg, rgba(14, 165, 233, .1), rgba(6, 182, 212, .07));
+      border: 1px solid rgba(14, 165, 233, .25);
+      color: var(--accent-hover);
+      border-radius: 8px;
+      padding: .22rem .65rem;
+      font-size: .8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      animation: tagIn .15s ease;
+    }
+
+    @keyframes tagIn {
+      from {
+        opacity: 0;
+        transform: scale(.85);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .symptom-tag button {
+      background: none;
+      border: none;
+      color: var(--accent-hover);
+      opacity: .55;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      font-size: .78rem;
+      transition: opacity .15s;
+    }
+
+    .symptom-tag button:hover {
+      opacity: 1;
+    }
+
+    .tag-type-input {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: .9rem;
+      outline: none;
+      flex: 1;
+      min-width: 160px;
+      font-family: 'Inter', sans-serif;
+      padding: .2rem 0;
+    }
+
+    .tag-type-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .field-help {
+      font-size: .76rem;
+      color: var(--text-muted);
+      margin-top: .4rem;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .kbd-hint {
+      background: #f1f5f9;
+      padding: .1rem .4rem;
+      border-radius: 5px;
+      font-size: .72rem;
+      font-family: monospace;
+      border: 1px solid #cbd5e1;
+      color: var(--text-sec);
+    }
+
+    /* Autocomplete */
+    .autocomplete-dropdown {
+      position: absolute;
+      z-index: 999;
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(15, 23, 42, .14);
+      max-height: 210px;
+      overflow-y: auto;
+      display: none;
+      margin-top: 4px;
+      width: 100%;
+    }
+
+    .autocomplete-dropdown.show {
+      display: block;
+    }
+
+    .autocomplete-item {
+      padding: .55rem 1rem;
+      font-size: .875rem;
+      cursor: pointer;
+      color: var(--text-sec);
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      border-bottom: 1px solid #f8fafc;
+    }
+
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+
+    .autocomplete-item:hover,
+    .autocomplete-item.selected {
+      background: #f0f9ff;
+      color: var(--accent-hover);
+    }
+
+    .autocomplete-item i {
+      color: var(--accent);
+      font-size: .75rem;
+    }
+
+    /* Buttons */
+    .btn-accent {
+      background: var(--grad);
+      color: white;
+      border: none;
+      padding: .75rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      text-decoration: none;
+      box-shadow: 0 3px 14px rgba(14, 165, 233, .35);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-accent:hover {
+      background: linear-gradient(135deg, #0284c7, #0891b2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, .45);
+      color: white;
+    }
+
+    .btn-cancel {
+      background: white;
+      color: var(--text-sec);
+      border: 1.5px solid #cbd5e1;
+      padding: .75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-cancel:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(14, 165, 233, .04);
+    }
+
+    .form-footer {
+      display: flex;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-light);
+      margin-top: 2rem;
+    }
+
+    /* Toasts */
+    .toast-container {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      z-index: 9999;
+    }
+
+    .toast-msg {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: .875rem 1.25rem;
+      margin-bottom: .5rem;
+      font-size: .86rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      box-shadow: 0 8px 32px rgba(15, 23, 42, .15);
+      animation: slideIn .3s ease;
+      min-width: 280px;
+      color: var(--text);
+    }
+
+    .toast-msg.success {
+      border-left: 3px solid var(--success);
+    }
+
+    .toast-msg.danger {
+      border-left: 3px solid var(--danger);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @media(max-width:640px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-area {
+        margin-left: 0;
+      }
+
+      .content {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
+      <div class="brand-text">
+        <h5>Admin Panel</h5>
+        <span>Disease Recognition System</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="sidebar-link">
+        Dashboard
+      </a>
+      <a href="{{ url_for('admin.add_disease') }}" class="sidebar-link active">
+        Add Disease
+      </a>
+      <div class="sidebar-divider"></div>
+      <div class="nav-section-label">Navigation</div>
+      <a href="{{ url_for('predictor') }}" class="sidebar-link">
+        Predictor
+      </a>
+      <a href="{{ url_for('prediction_history') }}" class="sidebar-link">
+        History
+      </a>
+      <a href="{{ url_for('home') }}" class="sidebar-link">
+        Home
+      </a>
+      <div class="sidebar-divider"></div>
+      <a href="{{ url_for('logout') }}" class="sidebar-link">
+        Logout
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-avatar">{{ current_user.username[0].upper() }}</div>
+      <div>
+        <div style="color:rgba(255,255,255,.5); font-size:.7rem; text-transform:uppercase; letter-spacing:.07em;">Signed
+          in as</div>
+        <strong>{{ current_user.username }}</strong>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-area">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">
+          <i class="fas fa-plus-circle"></i> Add New Disease
+        </div>
+        <div class="topbar-breadcrumb">
+          <span>Admin</span>
+          <i class="fas fa-chevron-right" style="font-size:.55rem;"></i>
+          <span style="color:rgba(255,255,255,.7);">Add Disease</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge-role"><i class="fas fa-user-shield"></i> Admin</span>
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn-topbar">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Toasts -->
+      <div class="toast-container" id="toastContainer">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="toast-msg {{ category }}" id="toast-{{ loop.index }}">
+          <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"
+            style="color:{% if category == 'success' %}var(--success){% else %}var(--danger){% endif %}"></i>
+          {{ message }}
+        </div>
+        {% endfor %}
+        {% endwith %}
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="header-icon"><i class="fas fa-disease"></i></div>
+          <div>
+            <h5>New Disease Entry</h5>
+            <p>Add a disease with its associated symptoms to the training dataset.</p>
+          </div>
+        </div>
+        <div class="form-body">
+          <form id="addDiseaseForm" method="POST" action="{{ url_for('admin.add_disease') }}"
+            onsubmit="return validateForm()">
+
+            <!-- Disease Name -->
+            <div class="field-group">
+              <label for="disease_name">Disease Name<span class="req">*</span></label>
+              <input type="text" id="disease_name" name="disease_name" class="field-input"
+                placeholder="e.g. Influenza, Dengue Fever…" autocomplete="off" required>
+              <div class="field-error" id="err-name" style="display:none;">
+                <i class="fas fa-exclamation-circle"></i> Disease name is required.
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="field-group">
+              <label for="description">Description <span
+                  style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+              <textarea id="description" name="description" class="field-input"
+                placeholder="Brief description of the disease…"></textarea>
+            </div>
+
+            <!-- Symptoms -->
+            <div class="field-group">
+              <label>Symptoms<span class="req">*</span></label>
+              <div style="position:relative">
+                <div class="tag-input-wrap" id="tagWrap" onclick="focusTagInput()">
+                  <input id="tagTyper" class="tag-type-input" placeholder="Type a symptom, press Enter or comma to add…"
+                    autocomplete="off" oninput="handleTagInput(event)" onkeydown="handleTagKeydown(event)"
+                    onfocus="document.getElementById('tagWrap').classList.add('focused')" onblur="onTagBlur()">
+                </div>
+                <div class="autocomplete-dropdown" id="autoDropdown"></div>
+              </div>
+              <div class="field-error" id="err-symptoms" style="display:none;">
+                <i class="fas fa-exclamation-circle"></i> At least one symptom is required.
+              </div>
+              <div class="field-help">
+                <i class="fas fa-keyboard"></i>
+                Press <span class="kbd-hint">Enter</span> or <span class="kbd-hint">,</span> to add.
+                Press <span class="kbd-hint">Backspace</span> to remove the last tag.
+              </div>
+              <input type="hidden" id="symptomsHidden" name="symptoms">
+            </div>
+
+            <div class="form-footer">
+              <button type="submit" class="btn-accent" id="submitBtn">
+                <i class="fas fa-plus"></i> Add Disease
+              </button>
+              <a href="{{ url_for('admin.admin_dashboard') }}" class="btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ALL_SYMPTOMS = {{ existing_symptoms | tojson }};
+    let selectedTags = [];
+    let acSelected = -1;
+
+    function renderTags() {
+      const wrap = document.getElementById('tagWrap');
+      wrap.querySelectorAll('.symptom-tag').forEach(e => e.remove());
+      const typer = document.getElementById('tagTyper');
+      selectedTags.forEach((tag, i) => {
+        const el = document.createElement('span');
+        el.className = 'symptom-tag';
+        el.innerHTML = `${escHtml(tag)} <button type="button" onclick="removeTag(${i})" title="Remove"><i class="fas fa-times"></i></button>`;
+        wrap.insertBefore(el, typer);
+      });
+      document.getElementById('symptomsHidden').value = selectedTags.join(',');
+    }
+
+    function addTag(val) {
+      val = val.trim().replace(/^,+|,+$/g, '');
+      if (!val) return;
+      if (!selectedTags.includes(val)) { selectedTags.push(val); renderTags(); }
+      document.getElementById('tagTyper').value = '';
+      hideDropdown();
+    }
+
+    function removeTag(i) { selectedTags.splice(i, 1); renderTags(); }
+    function focusTagInput() { document.getElementById('tagTyper').focus(); }
+    function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    function handleTagInput(e) {
+      const val = e.target.value;
+      if (val.endsWith(',')) { addTag(val.slice(0, -1)); return; }
+      showAutocomplete(val.trim());
+    }
+
+    function handleTagKeydown(e) {
+      const dd = document.getElementById('autoDropdown');
+      const items = dd.querySelectorAll('.autocomplete-item');
+      if (e.key === 'Enter') { e.preventDefault(); if (acSelected >= 0 && items[acSelected]) addTag(items[acSelected].dataset.val); else addTag(e.target.value); }
+      else if (e.key === 'Backspace' && !e.target.value && selectedTags.length) { selectedTags.pop(); renderTags(); }
+      else if (e.key === 'ArrowDown') { acSelected = Math.min(acSelected + 1, items.length - 1); highlightAC(items); }
+      else if (e.key === 'ArrowUp') { acSelected = Math.max(acSelected - 1, 0); highlightAC(items); }
+      else if (e.key === 'Escape') hideDropdown();
+    }
+
+    function highlightAC(items) { items.forEach((el, i) => el.classList.toggle('selected', i === acSelected)); }
+
+    function showAutocomplete(q) {
+      const dd = document.getElementById('autoDropdown');
+      if (!q) { hideDropdown(); return; }
+      const matches = ALL_SYMPTOMS.filter(s => s.toLowerCase().includes(q.toLowerCase()) && !selectedTags.includes(s)).slice(0, 10);
+      if (!matches.length) { hideDropdown(); return; }
+      acSelected = -1;
+      dd.innerHTML = matches.map(m => `<div class="autocomplete-item" data-val="${escHtml(m)}" onmousedown="addTag('${escHtml(m)}')"><i class="fas fa-tag"></i> ${escHtml(m)}</div>`).join('');
+      dd.classList.add('show');
+    }
+
+    function hideDropdown() { document.getElementById('autoDropdown').classList.remove('show'); acSelected = -1; }
+    function onTagBlur() { document.getElementById('tagWrap').classList.remove('focused'); setTimeout(hideDropdown, 200); }
+
+    function validateForm() {
+      let valid = true;
+      const name = document.getElementById('disease_name').value.trim();
+      if (!name) {
+        document.getElementById('disease_name').classList.add('invalid');
+        document.getElementById('err-name').style.display = 'flex';
+        valid = false;
+      } else {
+        document.getElementById('disease_name').classList.remove('invalid');
+        document.getElementById('err-name').style.display = 'none';
+      }
+      if (!selectedTags.length) {
+        document.getElementById('tagWrap').classList.add('invalid');
+        document.getElementById('err-symptoms').style.display = 'flex';
+        valid = false;
+      } else {
+        document.getElementById('tagWrap').classList.remove('invalid');
+        document.getElementById('err-symptoms').style.display = 'none';
+      }
+      if (valid) {
+        document.getElementById('symptomsHidden').value = selectedTags.join(',');
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Adding…';
+      }
+      return valid;
+    }
+
+    document.querySelectorAll('.toast-msg').forEach((el, i) => {
+      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .4s'; setTimeout(() => el.remove(), 400); }, 4500 + i * 500);
+    });
+  </script>
+</body>
+
+</html>

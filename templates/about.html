@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}About — Disease Recognition and Test Recommendation System{% endblock %}
+{% block content %}
+<div class="card card-accent">
+  <div class="d-flex align-items-center mb-4 gap-3">
+    <div class="icon-wrapper">
+      <i class="fas fa-info-circle"></i>
+    </div>
+    <div>
+      <h2 class="mb-0" style="font-size:1.75rem;">About Disease Recognition and Test Recommendation System</h2>
+      <p class="text-muted mb-0" style="font-size:0.92rem;">Advanced ML-based disease recognition and test recommendation</p>
+    </div>
+  </div>
+
+  <div class="about-content">
+    <p class="lead">Disease Recognition and Test Recommendation System is an intelligent healthcare application that uses machine learning to analyze patient symptoms, predict probable diseases with confidence scores, and recommend appropriate medical tests to support early and informed clinical decision-making.</p>
+
+    <!-- Feature Cards -->
+    <div class="row mt-3 mb-5">
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h5>Interpretable ML</h5>
+          <p>Feature importance and SHAP explanations provide transparency into how predictions are made, giving clinicians confidence in the output.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-sliders-h"></i>
+          </div>
+          <h5>Detailed Inputs</h5>
+          <p>Symptom severity &amp; duration are integrated into the model inputs for richer, more contextually accurate predictions.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-flask"></i>
+          </div>
+          <h5>Smart Recommendations</h5>
+          <p>Dynamic test recommendations are generated based on confidence levels and symptom patterns unique to each prediction.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="how-it-works">
+      <div class="section-tag mb-4">
+        <i class="fas fa-cogs"></i>How It Works
+      </div>
+      <div class="steps-grid">
+        <div class="how-step">
+          <div class="how-step-num">01</div>
+          <div class="how-step-content">
+            <h5>Enter Symptoms</h5>
+            <p>Select symptoms from a library of 132+ clinical symptoms. Optionally add severity (1–5) and duration in days for each one.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-num">02</div>
+          <div class="how-step-content">
+            <h5>ML Analysis</h5>
+            <p>Our ensemble model processes your inputs, generates a confidence-weighted disease prediction, and ranks contributing symptoms.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-num">03</div>
+          <div class="how-step-content">
+            <h5>Review &amp; Report</h5>
+            <p>Review the predicted disease, top symptoms, and recommended lab tests. Download a printable PDF report if logged in.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.about-content {
+  line-height: 1.8;
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.about-content .lead {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+/* How It Works */
+.how-it-works {
+  background: #f8fbff;
+  border: 1.5px solid #e0effe;
+  border-radius: 20px;
+  padding: 2.5rem;
+}
+
+.steps-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.how-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.25s ease;
+}
+
+.how-step:hover {
+  border-color: rgba(14, 165, 233, 0.3);
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.08);
+  transform: translateX(4px);
+}
+
+.how-step-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0ea5e9;
+  opacity: 0.25;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 48px;
+  letter-spacing: -0.03em;
+}
+
+.how-step:hover .how-step-num {
+  opacity: 0.5;
+}
+
+.how-step-content h5 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.375rem;
+}
+
+.how-step-content p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+  .about-content .lead { font-size: 1rem; }
+  .how-it-works { padding: 1.5rem; }
+  .how-step { flex-direction: column; gap: 0.75rem; }
+  .how-step-num { font-size: 1.5rem; }
+}
+</style>
+{% endblock %}

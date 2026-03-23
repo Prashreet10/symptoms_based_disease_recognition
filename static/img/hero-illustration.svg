@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260" viewBox="0 0 400 260" fill="none">
+  <rect width="400" height="260" rx="16" fill="#072237"/>
+  <g fill="#6ee7b7" opacity="0.9">
+    <circle cx="80" cy="80" r="36"/>
+    <rect x="140" y="50" width="160" height="100" rx="12"/>
+  </g>
+  <text x="200" y="200" fill="#9aa4b2" font-family="Arial" font-size="14" text-anchor="middle">
+    <tspan x="200" dy="0">Disease Recognition</tspan>
+    <tspan x="200" dy="18">and Test Recommendation System</tspan>
+  </text>
+</svg>

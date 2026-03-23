@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+{% block title %}Settings — Disease Recognition and Test Recommendation System{% endblock %}
+{% block content %}
+<div class="settings-container">
+  <div class="settings-header">
+    <div class="icon-wrapper mb-3" style="margin: 0 auto; width: 56px; height: 56px;">
+      <i class="fas fa-cog"></i>
+    </div>
+    <h1>Account Settings</h1>
+    <p>Manage your account preferences and security</p>
+  </div>
+
+  <div class="settings-grid">
+    <div class="settings-card">
+      <div class="settings-card-header">
+        <div class="settings-card-icon">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <h3>Account Information</h3>
+      </div>
+      <div class="info-section">
+        <div class="info-group">
+          <label>Username</label>
+          <p>{{ user.username }}</p>
+        </div>
+        <div class="info-group">
+          <label>Email</label>
+          <p>{{ user.email }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-card-header">
+        <div class="settings-card-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3>Security</h3>
+      </div>
+      <p class="settings-card-desc">Keep your account secure with a strong, unique password.</p>
+      <button class="btn btn-outline-primary" onclick="showChangePassword()">
+        <i class="fas fa-key me-2"></i>Change Password
+      </button>
+    </div>
+
+    <div class="settings-card danger-zone">
+      <div class="settings-card-header">
+        <div class="settings-card-icon danger-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3>Session</h3>
+      </div>
+      <p class="settings-card-desc">Sign out of your Disease Recognition and Test Recommendation System account on this device.</p>
+      <button class="btn btn-outline-danger" onclick="confirmLogout()">
+        <i class="fas fa-sign-out-alt me-2"></i>Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="changePasswordModal" class="settings-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div style="width:36px; height:36px; border-radius:10px; background: linear-gradient(135deg,#0ea5e9,#06b6d4); display:flex; align-items:center; justify-content:center; color:white; font-size:0.9rem;">
+            <i class="fas fa-key"></i>
+          </div>
+          <h3>Change Password</h3>
+        </div>
+        <button class="close-btn" onclick="closeChangePassword()">&times;</button>
+      </div>
+      <form id="changePasswordForm" class="modal-body">
+        <div class="form-group">
+          <label for="current-password" class="form-label">Current Password</label>
+          <input type="password" id="current-password" name="current_password" class="form-control" placeholder="Enter current password" required>
+        </div>
+        <div class="form-group">
+          <label for="new-password" class="form-label">New Password</label>
+          <input type="password" id="new-password" name="new_password" class="form-control" placeholder="Min. 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm-password" class="form-label">Confirm New Password</label>
+          <input type="password" id="confirm-password" name="confirm_password" class="form-control" placeholder="Repeat new password" required>
+        </div>
+        <div id="password-error" class="alert alert-danger" style="display: none;"></div>
+        <div id="password-success" class="alert alert-success" style="display: none;"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeChangePassword()">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-2"></i>Update Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+.settings-container {
+  padding: 1rem 0;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.settings-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.settings-header h1 {
+  margin: 0.75rem 0 0.5rem 0;
+  color: var(--text);
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.settings-header p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 1rem;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.settings-card {
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.settings-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  transform-origin: left;
+}
+
+.settings-card:hover::before {
+  transform: scaleX(1);
+}
+
+.settings-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.1);
+  border-color: rgba(14, 165, 233, 0.25);
+}
+
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.settings-card-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(14, 165, 233, 0.3);
+}
+
+.danger-icon {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3) !important;
+}
+
+.settings-card-header h3 {
+  margin: 0;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.settings-card-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-group {
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 1rem;
+}
+
+.info-group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-group label {
+  display: block;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-bottom: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.info-group p {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.danger-zone {
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.danger-zone::before {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+}
+
+.danger-zone:hover {
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Modal */
+.settings-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.25s ease;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 24px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 32px 80px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+  animation: slideUpModal 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid #e2e8f0;
+}
+
+@keyframes slideUpModal {
+  from { opacity: 0; transform: translateY(40px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-header {
+  padding: 1.75rem 2rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fbff;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: var(--text);
+  background: #e2e8f0;
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.875rem;
+  background: #f8fbff;
+}
+
+@media (max-width: 768px) {
+  .settings-grid { grid-template-columns: 1fr; }
+  .modal-content { width: 96%; }
+  .modal-body, .modal-header, .modal-footer { padding: 1.5rem; }
+}
+</style>
+
+<script>
+function showChangePassword() {
+  document.getElementById('changePasswordModal').style.display = 'flex';
+}
+
+function closeChangePassword() {
+  document.getElementById('changePasswordModal').style.display = 'none';
+  document.getElementById('changePasswordForm').reset();
+  document.getElementById('password-error').style.display = 'none';
+  document.getElementById('password-success').style.display = 'none';
+}
+
+function confirmLogout() {
+  if (confirm('Are you sure you want to logout?')) {
+    window.location.href = '/logout';
+  }
+}
+
+document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errorDiv = document.getElementById('password-error');
+  const successDiv = document.getElementById('password-success');
+  errorDiv.style.display = 'none';
+  successDiv.style.display = 'none';
+  errorDiv.textContent = 'Change password feature coming soon';
+  errorDiv.style.display = 'block';
+});
+
+document.getElementById('changePasswordModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('changePasswordModal')) {
+    closeChangePassword();
+  }
+});
+</script>
+{% endblock %}

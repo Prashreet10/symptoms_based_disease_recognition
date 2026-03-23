@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% block title %}Prediction History — Disease Recognition and Test Recommendation System{% endblock %}
+{% block content %}
+<div class="card card-accent">
+  <div class="d-flex align-items-center mb-4 gap-3">
+    <div class="icon-wrapper">
+      <i class="fas fa-history"></i>
+    </div>
+    <div>
+      <h2 class="mb-0" style="font-size:1.75rem;">Prediction History</h2>
+      <p class="text-muted mb-0" style="font-size:0.92rem;">Your past disease predictions and reports</p>
+    </div>
+  </div>
+
+  {% if history %}
+  <div class="history-table-wrapper">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Report ID</th>
+          <th>Date</th>
+          <th>Patient Name</th>
+          <th>Predicted Disease</th>
+          <th>Recommended Tests</th>
+          <th>Report</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in history %}
+        <tr>
+          <td>
+            <span class="report-id-badge">{{ rec.report_id }}</span>
+          </td>
+          <td>
+            <span class="date-text">{{ rec.prediction_date }}</span>
+          </td>
+          <td>{{ rec.patient_name or '—' }}</td>
+          <td>
+            <span class="disease-badge">
+              <i class="fas fa-circle"
+                style="font-size:0.5rem; color: #0ea5e9; margin-right: 0.4rem; vertical-align: middle;"></i>
+              {{ rec.predicted_disease }}
+            </span>
+          </td>
+          <td class="tests-cell">{{ rec.recommended_tests }}</td>
+          <td>
+            <a href="{{ url_for('download_report', report_id=rec.report_id) }}" class="btn btn-sm btn-primary">
+              <i class="fas fa-file-pdf me-1"></i>PDF
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">
+      <i class="fas fa-clipboard-list"></i>
+    </div>
+    <h4>No predictions yet</h4>
+    <p>You haven't made any predictions. Use the Predictor to analyze symptoms and your history will appear here.</p>
+    <a href="/predictor" class="btn btn-primary">
+      Go to Predictor
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .history-table-wrapper {
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+  }
+
+  .history-table-wrapper .table {
+    margin: 0;
+    border: none;
+  }
+
+  .history-table-wrapper .table th:first-child {
+    border-radius: 12px 0 0 0;
+  }
+
+  .history-table-wrapper .table th:last-child {
+    border-radius: 0 12px 0 0;
+  }
+
+  .table-bordered {
+    border: none !important;
+  }
+
+  .report-id-badge {
+    font-family: 'Outfit', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .date-text {
+    font-size: 0.875rem;
+    color: #64748b;
+    white-space: nowrap;
+  }
+
+  .disease-badge {
+    font-weight: 600;
+    color: #0284c7;
+    font-size: 0.9rem;
+  }
+
+  .tests-cell {
+    font-size: 0.85rem;
+    color: #64748b;
+    max-width: 200px;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+  }
+
+  .empty-state-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    color: #0ea5e9;
+    border: 1.5px solid rgba(14, 165, 233, 0.2);
+  }
+
+  .empty-state h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  .empty-state p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
+{% endblock %}

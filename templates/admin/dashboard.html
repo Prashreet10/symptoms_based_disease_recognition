@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel – Disease Recognition and Test Recommendation System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ── Design Tokens (matches new styles.css) ── */
+    :root {
+      --bg: #f0f5fb;
+      --nav: #0f172a;
+      --nav-sec: #1e293b;
+      --card: #ffffff;
+      --card-alt: #f8fbff;
+      --accent: #0ea5e9;
+      --accent-hover: #0284c7;
+      --accent-light: #38bdf8;
+      --teal: #06b6d4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text: #0f172a;
+      --text-sec: #475569;
+      --text-muted: #64748b;
+      --border: rgba(15, 23, 42, .09);
+      --border-light: rgba(15, 23, 42, .05);
+      --border-accent: rgba(14, 165, 233, .25);
+      --shadow: rgba(15, 23, 42, .07);
+      --shadow-lg: rgba(15, 23, 42, .12);
+      --grad: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+      --grad-nav: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --sidebar-w: 256px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--grad-nav);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, .25);
+      border-right: 1px solid rgba(255, 255, 255, .04);
+    }
+
+    .sidebar-brand {
+      padding: 1.5rem 1.25rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+    }
+
+    .sidebar-brand .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--grad);
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: 0 3px 12px rgba(14, 165, 233, .4);
+    }
+
+    .sidebar-brand .brand-text h5 {
+      font-family: 'Outfit', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .45);
+      margin: 0 0 .1rem;
+    }
+
+    .sidebar-brand .brand-text span {
+      color: white;
+      font-size: .92rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .nav-section-label {
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .35);
+      padding: .875rem 1.25rem .3rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .6rem 1.25rem;
+      color: rgba(255, 255, 255, .65);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      transition: all .2s;
+      border-left: 3px solid transparent;
+      margin: .1rem 0;
+    }
+
+    .sidebar-link:hover {
+      color: white;
+      background: rgba(255, 255, 255, .07);
+      border-left-color: rgba(14, 165, 233, .5);
+    }
+
+    .sidebar-link.active {
+      color: white;
+      background: linear-gradient(90deg, rgba(14, 165, 233, .2) 0%, rgba(14, 165, 233, .05) 100%);
+      border-left-color: #0ea5e9;
+    }
+
+    .sidebar-link.active i {
+      color: #38bdf8;
+    }
+
+    .sidebar-link i {
+      font-size: .875rem;
+      width: 16px;
+      text-align: center;
+      color: rgba(255, 255, 255, .45);
+      transition: color .2s;
+    }
+
+    .sidebar-link:hover i {
+      color: rgba(255, 255, 255, .85);
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, .07);
+      margin: .5rem 1.25rem;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, .08);
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .45);
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+    }
+
+    .sidebar-footer .user-avatar {
+      width: 30px;
+      height: 30px;
+      background: var(--grad);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      color: white;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer strong {
+      color: rgba(255, 255, 255, .85);
+    }
+
+    /* ── Main ── */
+    .main-area {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: var(--grad-nav);
+      padding: .875rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, .25);
+      border-bottom: 1px solid rgba(255, 255, 255, .05);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .topbar-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .topbar-title i {
+      color: #38bdf8;
+      font-size: .9rem;
+    }
+
+    .topbar-breadcrumb {
+      font-size: .75rem;
+      color: rgba(255, 255, 255, .45);
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: .625rem;
+      align-items: center;
+    }
+
+    .badge-role {
+      background: rgba(14, 165, 233, .2);
+      color: #7dd3fc;
+      padding: .28rem .85rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1px solid rgba(14, 165, 233, .3);
+      display: flex;
+      align-items: center;
+      gap: .375rem;
+    }
+
+    .content {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    /* ── Stat Cards ── */
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      box-shadow: 0 2px 16px var(--shadow);
+      transition: transform .25s, box-shadow .25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--grad);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .35s ease;
+    }
+
+    .stat-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px var(--shadow-lg);
+    }
+
+    .stat-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, rgba(14, 165, 233, .12), rgba(6, 182, 212, .06));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      border: 1px solid rgba(14, 165, 233, .18);
+    }
+
+    .stat-icon.green {
+      background: linear-gradient(135deg, rgba(16, 185, 129, .12), rgba(16, 185, 129, .06));
+      color: var(--success);
+      border-color: rgba(16, 185, 129, .2);
+    }
+
+    .stat-icon.purple {
+      background: linear-gradient(135deg, rgba(139, 92, 246, .12), rgba(139, 92, 246, .06));
+      color: #8b5cf6;
+      border-color: rgba(139, 92, 246, .2);
+    }
+
+    .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: .2rem;
+      letter-spacing: -.03em;
+    }
+
+    .stat-label {
+      font-size: .8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ── Panel Card ── */
+    .panel-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 2px 16px var(--shadow);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel-card-header {
+      padding: 1.125rem 1.5rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-alt);
+    }
+
+    .panel-card-header h6 {
+      margin: 0;
+      font-weight: 700;
+      font-size: .95rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .panel-card-header h6 i {
+      color: var(--accent);
+    }
+
+    .panel-card-body {
+      padding: 1.5rem;
+    }
+
+    /* ── Table ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .8);
+      padding: .75rem 1.1rem;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      text-align: left;
+      border: none;
+    }
+
+    .data-table th:first-child {
+      border-radius: 10px 0 0 0;
+    }
+
+    .data-table th:last-child {
+      border-radius: 0 10px 0 0;
+    }
+
+    .data-table td {
+      padding: .875rem 1.1rem;
+      border-bottom: 1px solid var(--border-light);
+      font-size: .875rem;
+      vertical-align: middle;
+      color: var(--text-sec);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table tbody tr:hover td {
+      background: #f0f9ff;
+      color: var(--text);
+    }
+
+    .data-table tbody tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .data-table tbody tr:nth-child(even):hover td {
+      background: #f0f9ff;
+    }
+
+    .disease-badge {
+      background: rgba(14, 165, 233, .1);
+      color: var(--accent-hover);
+      padding: .22rem .7rem;
+      border-radius: 7px;
+      font-size: .8rem;
+      font-weight: 600;
+      border: 1px solid rgba(14, 165, 233, .2);
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+    }
+
+    .disease-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    .sym-count {
+      background: rgba(16, 185, 129, .1);
+      color: var(--success);
+      padding: .2rem .65rem;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, .2);
+    }
+
+    .rows-muted {
+      font-size: .8rem;
+      color: var(--text-muted);
+    }
+
+    .count-badge {
+      background: rgba(14, 165, 233, .1);
+      color: var(--accent-hover);
+      padding: .15rem .6rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 700;
+      border: 1px solid rgba(14, 165, 233, .2);
+      margin-left: .4rem;
+    }
+
+    /* ── Status badges ── */
+    .status-running {
+      background: rgba(245, 158, 11, .12);
+      color: #d97706;
+      padding: .28rem .8rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1px solid rgba(245, 158, 11, .25);
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+    }
+
+    .status-done {
+      background: rgba(16, 185, 129, .12);
+      color: var(--success);
+      padding: .28rem .8rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1px solid rgba(16, 185, 129, .25);
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+    }
+
+    .status-error {
+      background: rgba(239, 68, 68, .12);
+      color: var(--danger);
+      padding: .28rem .8rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1px solid rgba(239, 68, 68, .25);
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+    }
+
+    /* ── Buttons ── */
+    .btn-accent {
+      background: var(--grad);
+      color: white;
+      border: none;
+      padding: .625rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: .875rem;
+      cursor: pointer;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      text-decoration: none;
+      box-shadow: 0 3px 14px rgba(14, 165, 233, .35);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-accent:hover {
+      background: linear-gradient(135deg, #0284c7, #0891b2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, .45);
+      color: white;
+    }
+
+    .btn-accent:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--text-sec);
+      border: 1.5px solid #cbd5e1;
+      padding: .6rem 1.3rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: .875rem;
+      cursor: pointer;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(14, 165, 233, .04);
+    }
+
+    .btn-topbar {
+      background: rgba(255, 255, 255, .1);
+      color: rgba(255, 255, 255, .9);
+      border: 1px solid rgba(255, 255, 255, .15);
+      padding: .4rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-topbar:hover {
+      background: rgba(255, 255, 255, .18);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .btn-icon-danger {
+      background: rgba(239, 68, 68, .08);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, .2);
+      padding: .35rem .7rem;
+      border-radius: 7px;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    .btn-icon-danger:hover {
+      background: var(--danger);
+      color: white;
+      border-color: var(--danger);
+    }
+
+    /* ── Retrain Section ── */
+    .retrain-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .retrain-info {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .retrain-info p {
+      margin: 0;
+      font-size: .9rem;
+      color: var(--text-sec);
+      line-height: 1.6;
+    }
+
+    .last-trained {
+      font-size: .8rem;
+      color: var(--text-muted);
+      margin-top: .5rem;
+      display: flex;
+      align-items: center;
+      gap: .375rem;
+    }
+
+    .last-trained span {
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    #retrain-progress-wrap {
+      display: none;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .progress-bar-outer {
+      background: rgba(14, 165, 233, .1);
+      border-radius: 999px;
+      height: 7px;
+      overflow: hidden;
+      border: 1px solid rgba(14, 165, 233, .15);
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--grad);
+      animation: progress-slide 1.8s ease-in-out infinite;
+      width: 60%;
+    }
+
+    @keyframes progress-slide {
+      0% {
+        transform: translateX(-80%);
+      }
+
+      100% {
+        transform: translateX(200%);
+      }
+    }
+
+    #retrain-status-msg {
+      font-size: .8rem;
+      margin-top: .5rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: .375rem;
+    }
+
+    /* ── Search ── */
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap i {
+      position: absolute;
+      left: .875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: .8rem;
+    }
+
+    .search-input {
+      background: white;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 9px;
+      color: var(--text);
+      padding: .5rem .875rem .5rem 2.25rem;
+      font-size: .875rem;
+      width: 260px;
+      font-family: 'Inter', sans-serif;
+      transition: border-color .2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, .12);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* ── Toasts ── */
+    .toast-container {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      z-index: 9999;
+    }
+
+    .toast-msg {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: .875rem 1.25rem;
+      margin-bottom: .5rem;
+      font-size: .86rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      box-shadow: 0 8px 32px rgba(15, 23, 42, .15);
+      animation: slideInRight .3s ease;
+      min-width: 280px;
+      color: var(--text);
+    }
+
+    .toast-msg.success {
+      border-left: 3px solid var(--success);
+    }
+
+    .toast-msg.danger {
+      border-left: 3px solid var(--danger);
+    }
+
+    .toast-msg.info {
+      border-left: 3px solid var(--accent);
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* ── Delete Overlay ── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .6);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    .overlay-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2.25rem;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(15, 23, 42, .25);
+      animation: overlayPop .3s cubic-bezier(.34, 1.56, .64, 1);
+      border: 1px solid var(--border);
+    }
+
+    @keyframes overlayPop {
+      from {
+        opacity: 0;
+        transform: scale(.94);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .overlay-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(239, 68, 68, .1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.1rem;
+      font-size: 1.4rem;
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, .2);
+    }
+
+    .overlay-card h5 {
+      font-weight: 700;
+      margin-bottom: .5rem;
+      color: var(--text);
+      font-size: 1.15rem;
+    }
+
+    .overlay-card p {
+      color: var(--text-muted);
+      font-size: .9rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .overlay-btns {
+      display: flex;
+      gap: .75rem;
+      justify-content: center;
+    }
+
+    .btn-delete-confirm {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+      padding: .65rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: .875rem;
+      cursor: pointer;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      box-shadow: 0 3px 14px rgba(239, 68, 68, .35);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-delete-confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, .48);
+    }
+
+    .btn-delete-confirm:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Empty state ── */
+    .empty-cell {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 3rem 1rem !important;
+    }
+
+    .empty-cell-icon {
+      font-size: 2rem;
+      opacity: .25;
+      display: block;
+      margin-bottom: .75rem;
+    }
+
+    /* Responsive */
+    @media(max-width:900px) {
+      :root {
+        --sidebar-w: 220px;
+      }
+
+      .stat-cards {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media(max-width:640px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-area {
+        margin-left: 0;
+      }
+
+      .stat-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .search-input {
+        width: 100%;
+      }
+
+      .content {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
+      <div class="brand-text">
+        <h5>Admin Panel</h5>
+        <span>Disease Recognition and Test Recommendation System</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="sidebar-link active">
+        Dashboard
+      </a>
+      <a href="{{ url_for('admin.add_disease') }}" class="sidebar-link">
+        Add Disease
+      </a>
+      <div class="sidebar-divider"></div>
+      <div class="nav-section-label">Navigation</div>
+      <a href="{{ url_for('predictor') }}" class="sidebar-link">
+        Predictor
+      </a>
+      <a href="{{ url_for('prediction_history') }}" class="sidebar-link">
+        History
+      </a>
+      <a href="{{ url_for('home') }}" class="sidebar-link">
+        </i> Home
+      </a>
+      <div class="sidebar-divider"></div>
+      <a href="{{ url_for('logout') }}" class="sidebar-link">
+        Logout
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-avatar">{{ current_user.username[0].upper() }}</div>
+      <div>
+        <div style="color:rgba(255,255,255,.5); font-size:.7rem; text-transform:uppercase; letter-spacing:.07em;">Signed
+          in as</div>
+        <strong>{{ current_user.username }}</strong>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Area ── -->
+  <div class="main-area">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">
+          <i class="fas fa-th-large"></i> Admin Dashboard
+        </div>
+        <div class="topbar-breadcrumb">
+          <span>Disease Recognition and Test Recommendation System</span>
+          <i class="fas fa-chevron-right" style="font-size:.55rem;"></i>
+          <span style="color:rgba(255,255,255,.7);">Admin</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge-role"><i class="fas fa-user-shield"></i> Admin</span>
+        <a href="{{ url_for('admin.add_disease') }}" class="btn-topbar">
+          <i class="fas fa-plus"></i> New Disease
+        </a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Flash Toasts -->
+      <div class="toast-container" id="toastContainer">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="toast-msg {{ category }}" id="toast-{{ loop.index }}">
+          <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% else %}info-circle{% endif %}"
+            style="color:{% if category == 'success' %}var(--success){% elif category == 'danger' %}var(--danger){% else %}var(--accent){% endif %}"></i>
+          {{ message }}
+        </div>
+        {% endfor %}
+        {% endwith %}
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-disease"></i></div>
+          <div>
+            <div class="stat-val" id="stat-diseases">{{ stats.disease_count }}</div>
+            <div class="stat-label">Total Diseases</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-list-ul"></i></div>
+          <div>
+            <div class="stat-val" id="stat-symptoms">{{ stats.symptom_count }}</div>
+            <div class="stat-label">Unique Symptoms</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple"><i class="fas fa-robot"></i></div>
+          <div>
+            <div class="stat-val" style="font-size:1.1rem;" id="stat-trained">{{ last_trained or 'Never' }}</div>
+            <div class="stat-label">Last Model Retrain</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Retrain Model -->
+      <div class="panel-card">
+        <div class="panel-card-header">
+          <h6><i class="fas fa-brain"></i> Model Training</h6>
+          {% if training_state.status == 'running' %}
+          <span class="status-running"><i class="fas fa-circle-notch fa-spin"></i> Training…</span>
+          {% elif training_state.status == 'done' %}
+          <span class="status-done"><i class="fas fa-check-circle"></i> Completed</span>
+          {% elif training_state.status == 'error' %}
+          <span class="status-error"><i class="fas fa-times-circle"></i> Error</span>
+          {% endif %}
+        </div>
+        <div class="panel-card-body">
+          <div class="retrain-wrapper">
+            <div class="retrain-info">
+              <p>Retrain the XGBoost model using the current dataset CSV. Runs in the background — track progress below.
+              </p>
+              <div class="last-trained">
+                <i class="fas fa-clock"></i>
+                Last trained: <span>{{ last_trained or 'Never' }}</span>
+              </div>
+              <div id="retrain-progress-wrap">
+                <div class="progress-bar-outer">
+                  <div class="progress-bar-inner" id="progressBar"></div>
+                </div>
+                <div id="retrain-status-msg"><i class="fas fa-circle-notch fa-spin"></i> Initialising training…</div>
+              </div>
+            </div>
+            <button class="btn-accent" id="retrainBtn" onclick="startRetrain()">
+              <i class="fas fa-redo-alt"></i> Retrain Model
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diseases Table -->
+      <div class="panel-card">
+        <div class="panel-card-header">
+          <h6>
+            <i class="fas fa-database"></i>
+            Dataset — Diseases
+            <span class="count-badge">{{ diseases | length }}</span>
+          </h6>
+          <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input class="search-input" id="searchInput" type="text" placeholder="Search diseases…"
+              oninput="filterTable()">
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="diseasesTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Disease Name</th>
+                <th>Unique Symptoms</th>
+                <th>Dataset Rows</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in diseases %}
+              <tr>
+                <td class="rows-muted">{{ loop.index }}</td>
+                <td><span class="disease-badge">{{ d.name }}</span></td>
+                <td><span class="sym-count">{{ d.symptom_count }}</span></td>
+                <td class="rows-muted">{{ d.row_count }} rows</td>
+                <td>
+                  <button class="btn-icon-danger" onclick="confirmDelete('{{ d.name | e }}')">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" class="empty-cell">
+                  <i class="fas fa-inbox empty-cell-icon"></i>
+                  No diseases in dataset yet.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Delete Confirm Overlay -->
+  <div class="overlay" id="deleteOverlay">
+    <div class="overlay-card">
+      <div class="overlay-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h5>Delete Disease?</h5>
+      <p>All rows for <strong id="deleteDiseaseName"></strong> will be removed from the dataset CSV and cannot be
+        recovered.</p>
+      <div class="overlay-btns">
+        <button class="btn-outline" onclick="closeDelete()"><i class="fas fa-times"></i> Cancel</button>
+        <button class="btn-delete-confirm" id="confirmDeleteBtn" onclick="executeDelete()">
+          <i class="fas fa-trash-alt"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let pendingDelete = null;
+
+    // Toasts
+    document.querySelectorAll('.toast-msg').forEach((el, i) => {
+      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .4s'; setTimeout(() => el.remove(), 400); }, 4500 + i * 500);
+    });
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toastContainer');
+      const icons = { success: 'check-circle', danger: 'exclamation-circle', info: 'info-circle' };
+      const colors = { success: 'var(--success)', danger: 'var(--danger)', info: 'var(--accent)' };
+      const t = document.createElement('div');
+      t.className = `toast-msg ${type}`;
+      t.innerHTML = `<i class="fas fa-${icons[type] || 'info-circle'}" style="color:${colors[type] || 'var(--accent)'}"></i> ${msg}`;
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .4s'; setTimeout(() => t.remove(), 400); }, 4000);
+    }
+
+    // Search
+    function filterTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('#diseasesTable tbody tr').forEach(r => {
+        r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+
+    // Delete
+    function confirmDelete(name) {
+      pendingDelete = name;
+      document.getElementById('deleteDiseaseName').textContent = name;
+      document.getElementById('deleteOverlay').classList.add('active');
+    }
+    function closeDelete() { pendingDelete = null; document.getElementById('deleteOverlay').classList.remove('active'); }
+    async function executeDelete() {
+      if (!pendingDelete) return;
+      const btn = document.getElementById('confirmDeleteBtn');
+      btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting…';
+      try {
+        const res = await fetch('/admin/delete_disease', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ disease_name: pendingDelete }) });
+        const data = await res.json();
+        closeDelete();
+        if (data.success) { showToast(`Deleted "${pendingDelete}" from dataset.`, 'success'); setTimeout(() => location.reload(), 1200); }
+        else showToast(`Error: ${data.message}`, 'danger');
+      } catch (e) { showToast('Network error — please try again.', 'danger'); }
+      finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete'; }
+    }
+
+    // Retrain
+    let pollingInterval = null;
+    async function startRetrain() {
+      const btn = document.getElementById('retrainBtn');
+      btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Starting…';
+      document.getElementById('retrain-progress-wrap').style.display = 'block';
+      document.getElementById('retrain-status-msg').innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending request…';
+      try {
+        const res = await fetch('/admin/retrain', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('retrain-status-msg').innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Training in progress — this may take a few minutes…';
+          pollTrainingStatus();
+        } else { showToast(`Could not start training: ${data.message}`, 'danger'); resetRetrainUI(); }
+      } catch (e) { showToast('Network error.', 'danger'); resetRetrainUI(); }
+    }
+    function pollTrainingStatus() {
+      if (pollingInterval) clearInterval(pollingInterval);
+      pollingInterval = setInterval(async () => {
+        try {
+          const res = await fetch('/admin/training_status');
+          const state = await res.json();
+          if (state.status === 'done') {
+            clearInterval(pollingInterval);
+            showToast('Model retrained successfully! Reloading…', 'success');
+            document.getElementById('retrain-status-msg').innerHTML = '✅ Training complete!';
+            document.getElementById('progressBar').style.animation = 'none';
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('progressBar').style.background = 'var(--success)';
+            resetRetrainUI(true);
+          } else if (state.status === 'error') {
+            clearInterval(pollingInterval);
+            showToast(`Training error: ${state.error}`, 'danger');
+            document.getElementById('retrain-status-msg').textContent = '❌ Error: ' + (state.error || '');
+            resetRetrainUI();
+          }
+        } catch (e) {
+          console.error('Training status polling failed:', e);
+          showToast('Training status polling failed. Check server logs.', 'danger');
+          clearInterval(pollingInterval);
+          resetRetrainUI();
+          const msgEl = document.getElementById('retrain-status-msg');
+          if (msgEl) msgEl.textContent = '❌ Error: Unable to fetch training status';
+        }
+      }, 2500);
+    }
+    function resetRetrainUI(done = false) {
+      const btn = document.getElementById('retrainBtn');
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-redo-alt"></i> Retrain Model';
+      if (done) setTimeout(() => location.reload(), 2000);
+    }
+    {% if training_state.status == 'running' %}
+    document.getElementById('retrain-progress-wrap').style.display = 'block';
+    document.getElementById('retrainBtn').disabled = true;
+    document.getElementById('retrainBtn').innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Training…';
+    document.getElementById('retrain-status-msg').innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Training in progress…';
+    pollTrainingStatus();
+    {% endif %}
+  </script>
+</body>
+
+</html>
+</html>

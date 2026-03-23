@@ -1,0 +1,14 @@
+xgboost
+pandas
+numpy
+scikit-learn
+joblib
+shap
+matplotlib
+flask
+gunicorn
+mysql-connector-python
+Flask-Login
+werkzeug
+python-dotenv
+fpdf

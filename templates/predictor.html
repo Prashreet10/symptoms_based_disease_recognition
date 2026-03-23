@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% block title %}Predictor — Disease Recognition and Test Recommendation System{% endblock %}
+{% block content %}
+<div class="card card-accent">
+  <div class="d-flex align-items-center mb-4 gap-3">
+    <div class="icon-wrapper">
+      <i class="fas fa-stethoscope"></i>
+    </div>
+    <div>
+      <h2 class="mb-0" style="font-size:1.75rem;">Disease Predictor</h2>
+      <p class="text-muted mb-0" style="font-size:0.92rem;">Enter patient symptoms with optional severity and duration</p>
+    </div>
+  </div>
+
+  <!-- Step Indicator -->
+  <div class="step-indicator">
+    <div class="step active" id="step1">
+      <div class="step-num">1</div>
+      <span>Add Symptoms</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" id="step2">
+      <div class="step-num">2</div>
+      <span>Run Analysis</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div>
+      <span>View Results</span>
+    </div>
+  </div>
+
+  <form id="symptom-form">
+    <div class="mb-4">
+      <label for="patient-name" class="form-label">
+        <i class="fas fa-user me-1" style="color: var(--accent);"></i>Patient Name
+        <small>(optional)</small>
+      </label>
+      <input type="text" class="form-control" id="patient-name" name="patient_name" placeholder="e.g., John Smith" />
+    </div>
+
+    <datalist id="symptoms-list">
+      {% for s in symptoms %}
+      <option value="{{ s }}"></option>
+      {% endfor %}
+    </datalist>
+
+    <div class="info-badge mb-4">
+      <i class="fas fa-database"></i>
+      <span><strong>{{ symptoms|length }}</strong> symptoms available in the knowledge base</span>
+    </div>
+
+    <div id="symptom-list">
+      <div class="symptom-row d-flex gap-2 mb-3 align-items-center">
+        <div class="flex-grow-1">
+          <label class="form-label small text-muted mb-1">
+            <i class="fas fa-search me-1" style="color: var(--accent);"></i>Symptom Name
+          </label>
+          <input name="symptom" list="symptoms-list" class="form-control" placeholder="e.g., fever, headache, cough" />
+        </div>
+        <div style="width: 120px;">
+          <label class="form-label small text-muted mb-1">
+            <i class="fas fa-signal me-1" style="color: var(--accent);"></i>Severity (1-5)
+          </label>
+          <input name="severity" class="form-control" type="number" min="1" max="5" placeholder="1-5" />
+        </div>
+        <div style="width: 140px;">
+          <label class="form-label small text-muted mb-1">
+            <i class="fas fa-calendar-alt me-1" style="color: var(--accent);"></i>Duration (days)
+          </label>
+          <input name="duration" class="form-control" type="number" min="1" placeholder="Days" />
+        </div>
+        <div class="d-flex align-items-end" style="height: 58px;">
+          <button class="btn btn-outline-danger remove" type="button" title="Remove symptom">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-4">
+      <button id="add-symptom" class="btn btn-outline-primary" type="button">
+        <i class="fas fa-plus me-2"></i>Add Symptom
+      </button>
+      <button id="submit" class="btn btn-primary flex-grow-1" type="submit">
+        <i class="fas fa-brain me-2"></i>Analyze &amp; Predict
+      </button>
+    </div>
+  </form>
+
+  <section id="result" class="mt-4 d-none">
+    <div class="result-header mb-4">
+      <h4 class="mb-0">
+        <i class="fas fa-chart-line me-2" style="color: var(--accent);"></i>
+        Prediction Results
+      </h4>
+    </div>
+
+    <div id="prediction" class="prediction-card"></div>
+
+    <div class="mt-3 mb-2">
+      <a id="download-report-pdf" class="btn btn-outline-primary d-none" href="#" title="Download PDF Report">
+        <i class="fas fa-file-pdf me-2"></i>Download PDF Report
+      </a>
+      {% if not current_user.is_authenticated %}
+      <p id="pdf-login-hint" class="small text-muted mb-0 mt-2">
+        <i class="fas fa-lock me-1"></i>Log in to save history and download PDF reports.
+      </p>
+      {% endif %}
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6 mb-3">
+        <div class="result-subcard">
+          <h5 class="result-subtitle">
+            <i class="fas fa-list-ul me-2" style="color: var(--accent);"></i>
+            Top Contributing Symptoms
+          </h5>
+          <ul id="top-features"></ul>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="result-subcard">
+          <h5 class="result-subtitle">
+            <i class="fas fa-flask me-2" style="color: var(--accent);"></i>
+            Recommended Tests
+          </h5>
+          <ul id="tests"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+.prediction-card {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0284c7;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+  border-radius: 14px;
+  border-left: 4px solid #0ea5e9;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 2px 16px rgba(14, 165, 233, 0.12);
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 0.5s ease;
+}
+
+.prediction-card::before {
+  content: "🩺";
+  font-size: 2.25rem;
+}
+
+.result-subcard {
+  background: #f8fbff;
+  border: 1.5px solid #e0effe;
+  border-radius: 14px;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.result-subtitle {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#top-features li,
+#tests li {
+  padding: 0.7rem 1rem;
+  margin-bottom: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  border-left: 3px solid #0ea5e9;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+#top-features li:hover,
+#tests li:hover {
+  background: #f0f9ff;
+  transform: translateX(4px);
+  color: var(--text);
+}
+
+/* Override global ul::before for result lists */
+#top-features li::before,
+#tests li::before {
+  content: none;
+}
+
+#top-features li {
+  padding-left: 1rem;
+}
+#tests li {
+  padding-left: 1rem;
+}
+
+@media (max-width: 768px) {
+  .prediction-card { font-size: 1.3rem; padding: 1.25rem; }
+  .prediction-card::before { font-size: 1.75rem; }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI-powered symptom-based disease recognition and test recommendation system.">
+  <title>{% block title %}Disease Recognition and Test Recommendation System{% endblock %}</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="navbar-logo">
+        <span class="brand-name">
+          <span class="brand-title">Disease Recognition and Test Recommendation System</span>
+          <span class="brand-sub">Disease Recognizer</span>
+        </span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/predictor">Predictor</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <div class="nav-user-menu">
+              <button class="nav-user-btn" onclick="toggleUserMenu()">
+                <i class="fas fa-user-circle"></i> {{ current_user.username }}
+                <i class="fas fa-chevron-down ms-1" style="font-size:0.7rem; opacity:0.7;"></i>
+              </button>
+              <div id="userMenu" class="user-menu-dropdown">
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <a class="dropdown-item" href="/admin"><i class="fas fa-tools me-2"></i>Admin Panel</a>
+                {% endif %}
+                <a class="dropdown-item" href="/history"><i class="fas fa-history me-2"></i>Prediction History</a>
+                <a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item dropdown-item-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+              </div>
+            </div>
+          </li>
+          {% else %}
+          <li class="nav-item ms-2">
+            <a class="nav-login-btn" href="/auth">Login</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container my-5">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-brand-icon">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <div>
+            <span class="footer-brand-sub"> A symptom based disease recognizer</span>
+          </div>
+        </div>
+        <div class="footer-center">
+          © {{ current_year or 2025 }} Disease Recognition and Test Recommendation System
+        </div>
+        <div class="footer-right">
+          <span style="color: rgba(255,255,255,0.35); font-size: 0.75rem;">
+            <i class="fas fa-shield-alt me-1"></i>Powered by Machine Learning
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    .navbar {
+      position: relative;
+      z-index: 1000 !important;
+    }
+
+    .nav-user-menu {
+      position: relative;
+      display: inline-block;
+    }
+
+    .nav-user-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      padding: 0.45rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nav-user-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+
+    .nav-user-btn .fa-user-circle {
+      font-size: 1.1rem;
+      color: #38bdf8;
+    }
+
+    .user-menu-dropdown {
+      position: absolute;
+      top: calc(100% + 0.625rem);
+      right: 0;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      min-width: 220px;
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.18);
+      display: none;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .user-menu-dropdown.show {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+      animation: menuFadeIn 0.2s ease;
+    }
+
+    @keyframes menuFadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1.25rem;
+      color: #1e293b;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: white;
+      font-weight: 500;
+      font-size: 0.88rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .dropdown-item:hover {
+      background: #f0f9ff;
+      color: #0284c7;
+      padding-left: 1.5rem;
+    }
+
+    .dropdown-item .fas {
+      width: 16px;
+      color: #94a3b8;
+    }
+
+    .dropdown-item:hover .fas {
+      color: #0ea5e9;
+    }
+
+    .dropdown-item-danger {
+      color: #ef4444 !important;
+    }
+
+    .dropdown-item-danger .fas {
+      color: #ef4444 !important;
+    }
+
+    .dropdown-item-danger:hover {
+      background: #fff5f5 !important;
+      color: #dc2626 !important;
+    }
+
+    .dropdown-divider {
+      margin: 0.25rem 0;
+      border: none;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .nav-login-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.125rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 12px rgba(14, 165, 233, 0.4);
+    }
+
+    .nav-login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
+      color: white;
+      text-decoration: none;
+    }
+  </style>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById('userMenu');
+      if (menu) {
+        menu.classList.toggle('show');
+      }
+    }
+
+    document.addEventListener('click', function (event) {
+      const menu = document.getElementById('userMenu');
+      const btn = document.querySelector('.nav-user-btn');
+      if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.remove('show');
+      }
+    });
+  </script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>
