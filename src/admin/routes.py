@@ -185,13 +185,7 @@ def delete_disease():
 
     # Also try removing from DB (non-fatal)
     try:
-        conn = db.connect()
-        if conn:
-            cur = conn.cursor()
-            cur.execute('DELETE FROM diseases WHERE name = %s', (disease_name,))
-            conn.commit()
-            cur.close()
-            conn.close()
+        db.delete_disease(disease_name)
     except Exception:
         pass
 

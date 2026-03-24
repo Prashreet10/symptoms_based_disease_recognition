@@ -48,7 +48,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    user = db.get_user_by_id(int(user_id))
+    user = db.get_user_by_id(user_id)
     if user:
         return User(user['id'], user['username'], user['email'], user.get('role', 'user'))
     return None
@@ -113,7 +113,7 @@ def api_login():
     
     if result['success']:
         user = result.get('user')
-        user_obj = User(user['id'], user['username'], user['email'])
+        user_obj = User(user['id'], user['username'], user['email'], user.get('role', 'user'))
         login_user(user_obj)
         return jsonify({'success': True, 'message': 'Login successful'}), 200
     

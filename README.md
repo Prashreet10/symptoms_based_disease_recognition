@@ -4,7 +4,7 @@ This project trains an XGBoost model to predict diseases from symptom inputs, us
 
 ## ✨ New Features (v2.0)
 
-**MySQL Authentication System** - Users can now:
+**MongoDB Authentication System** - Users can now:
 - 📝 Sign up with username, email, and password
 - 🔐 Login securely with password hashing
 - 📊 Access personalized dashboard
@@ -21,9 +21,8 @@ This project trains an XGBoost model to predict diseases from symptom inputs, us
 pip install -r requirements.txt
 
 # 2. Set up environment variables
-$env:DB_HOST = "localhost"
-$env:DB_USER = "root"
-$env:DB_NAME = "symptom_predictor"
+$env:MONGODB_URI = "mongodb://localhost:27017/disease_recognition"
+$env:MONGO_DB_NAME = "disease_recognition"
 
 # 3. Initialize database
 python init_db.py
@@ -60,7 +59,7 @@ For complete information about the new authentication system:
 |----------|---------|
 | [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) | 📑 **Start here** - Documentation guide |
 | [QUICK_START.md](QUICK_START.md) | ⚡ 5-minute setup guide |
-| [DATABASE_SETUP.md](DATABASE_SETUP.md) | 📖 Detailed MySQL setup |
+| [DATABASE_SETUP.md](DATABASE_SETUP.md) | 📖 Detailed MongoDB setup |
 | [QUICK_REFERENCE.md](QUICK_REFERENCE.md) | 📋 Commands & API reference |
 | [FEATURES_OVERVIEW.md](FEATURES_OVERVIEW.md) | 🎯 Feature descriptions |
 | [FILE_CHANGES.md](FILE_CHANGES.md) | 💻 Code-level details |
@@ -72,7 +71,7 @@ For complete information about the new authentication system:
 project/
 ├── src/
 │   ├── app.py              ← Flask application with auth
-│   ├── database.py         ← MySQL connectivity
+│   ├── database.py         ← MongoDB connectivity
 │   ├── predict.py
 │   ├── train.py
 │   └── preprocess.py

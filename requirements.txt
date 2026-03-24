@@ -7,7 +7,7 @@ shap
 matplotlib
 flask
 gunicorn
-mysql-connector-python
+pymongo[srv]
 Flask-Login
 werkzeug
 python-dotenv

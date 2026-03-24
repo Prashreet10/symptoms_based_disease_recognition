@@ -1,261 +1,114 @@
-# MySQL Database Setup Guide
+# MongoDB Setup Guide
 
-This guide will help you set up MySQL database connectivity for the Symptom-based Disease Prediction application.
+This project now uses MongoDB for authentication, disease metadata, and prediction history. That fits Render deployment better because the app only needs a single `MONGODB_URI` secret instead of a self-managed MySQL service.
 
 ## Prerequisites
 
-1. **MySQL Server** - Download and install from [mysql.com](https://www.mysql.com/downloads/)
-   - Windows: MySQL Community Server MSI Installer
-   - macOS: Homebrew or DMG Installer
-   - Linux: Package manager (apt, yum, etc.)
+1. Python 3.7+
+2. A MongoDB database
+   Options:
+   - Local MongoDB for development
+   - MongoDB Atlas for production/Render
 
-2. **Python 3.7+** - Already installed on your system
-
-## Installation Steps
-
-### Step 1: Install Dependencies
-
-Update the Python packages by running:
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-This will install:
-- `mysql-connector-python` - MySQL database connector
-- `Flask-Login` - Flask user session management
-- `werkzeug` - Security utilities (password hashing)
+Key packages:
+- `pymongo[srv]` for MongoDB connections, including Atlas SRV URIs
+- `Flask-Login` for sessions
+- `werkzeug` for password hashing
 
-### Step 2: Configure MySQL
+## Configure Environment Variables
 
-Start your MySQL server:
+### PowerShell
 
-**Windows:**
-```bash
-mysql -u root
-```
-
-**macOS/Linux:**
-```bash
-mysql -u root -p
-```
-
-You'll be prompted for a password if you set one during installation.
-
-### Step 3: Set Environment Variables
-
-Create environment variables for database connection:
-
-**Windows (PowerShell):**
 ```powershell
-$env:DB_HOST = "localhost"
-$env:DB_USER = "root"
-$env:DB_PASSWORD = "your_password"
-$env:DB_NAME = "symptom_predictor"
+$env:MONGODB_URI = "mongodb://localhost:27017/disease_recognition"
+$env:MONGO_DB_NAME = "disease_recognition"
 $env:SECRET_KEY = "your-secret-key-change-in-production"
 ```
 
-**macOS/Linux (Bash):**
+### Bash
+
 ```bash
-export DB_HOST="localhost"
-export DB_USER="root"
-export DB_PASSWORD="your_password"
-export DB_NAME="symptom_predictor"
+export MONGODB_URI="mongodb://localhost:27017/disease_recognition"
+export MONGO_DB_NAME="disease_recognition"
 export SECRET_KEY="your-secret-key-change-in-production"
 ```
 
-> **Note:** If you didn't set a password during MySQL installation, leave `DB_PASSWORD` empty.
+Notes:
+- If your URI already includes the database name, `MONGO_DB_NAME` is optional.
+- For MongoDB Atlas, your URI will usually look like `mongodb+srv://...`.
 
-### Step 4: Initialize Database
-
-Run the initialization script to create the database and tables:
+## Initialize Indexes
 
 ```bash
 python init_db.py
 ```
 
-You should see:
-```
-Initializing database...
-Database initialization completed successfully!
-```
+This creates the MongoDB indexes the app expects:
+- unique username
+- unique email
+- unique disease name
+- unique report id
+- prediction history lookup indexes
 
-### Step 5: Run the Application
-
-Start the Flask application:
+## Run the App
 
 ```bash
 python -m src.app
 ```
 
-The application will be available at `http://localhost:8000`
+The app runs on `http://localhost:8000` by default.
 
-## Features
+## Render Deployment
 
-### Authentication System
+Render's current docs support two practical MongoDB approaches for this app:
 
-#### Login/Sign Up Page (`/auth`)
-- **Sign Up**: Create new account with username, email, and password
-- **Login**: Access existing account with username and password
-- Forms toggle between login and signup views
-- Client-side validation for password requirements
+1. Deploy this Flask app on Render and connect it to MongoDB Atlas.
+2. Or run MongoDB on Render as a private Docker service backed by a persistent disk.
 
-#### Security
-- Passwords are hashed using `werkzeug.security.generate_password_hash`
-- User sessions managed by Flask-Login
-- Protected routes require login (e.g., `/dashboard`, `/settings`)
+For the simplest app deployment flow, Atlas is usually easiest:
 
-### User Features
+1. Deploy this Flask app on Render.
+2. Create a MongoDB Atlas cluster.
+3. Add `MONGODB_URI` and `SECRET_KEY` as Render environment variables.
+4. Optionally add `MONGO_DB_NAME` if your URI does not specify it.
 
-#### Dashboard (`/dashboard`)
-- Welcome message with username
-- Quick access to predictor and other features
-- Account information display
-- Personalized experience for logged-in users
+If you host MongoDB on Render itself, make sure the database service uses a persistent disk because Render web services otherwise use an ephemeral filesystem.
 
-#### Settings (`/settings`)
-- View account information
-- Change password option
-- Logout functionality
+## Stored Collections
 
-#### Navigation
-- Dynamic navbar showing login/signup button for guests
-- User menu dropdown for authenticated users
-- Quick access to dashboard and settings
-
-## Database Schema
-
-### Users Table
-```sql
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(80) UNIQUE NOT NULL,
-    email VARCHAR(120) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
-```
-
-## API Endpoints
-
-### Authentication Endpoints
-
-#### Sign Up
-- **Endpoint**: `POST /api/signup`
-- **Body**: 
-  ```json
-  {
-    "username": "string",
-    "email": "string",
-    "password": "string"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "success": true/false,
-    "message": "string"
-  }
-  ```
-
-#### Login
-- **Endpoint**: `POST /api/login`
-- **Body**:
-  ```json
-  {
-    "username": "string",
-    "password": "string"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "success": true/false,
-    "message": "string"
-  }
-  ```
-
-#### Logout
-- **Endpoint**: `GET /logout`
-- **Requires**: User authentication
-- **Redirects to**: Home page
+The app uses these MongoDB collections:
+- `users`
+- `diseases`
+- `prediction_history`
 
 ## Troubleshooting
 
-### Error: "Access denied for user 'root'@'localhost'"
-- Check MySQL is running
-- Verify username and password are correct
-- Ensure environment variables are set
+### Could not connect to MongoDB
+- Check that `MONGODB_URI` is correct.
+- If using Atlas, confirm your IP/network access rules allow Render or your local machine.
+- Make sure the database user/password in the URI are valid.
 
-### Error: "Unknown database 'symptom_predictor'"
-- Run `python init_db.py` to create database
+### Duplicate username or email
+- MongoDB unique indexes enforce this now.
+- Try a different username/email or remove the old record from the `users` collection.
 
-### Error: "No module named 'mysql.connector'"
-- Run `pip install mysql-connector-python`
+### Atlas SRV URI issues
+- Make sure `pymongo[srv]` is installed from `requirements.txt`.
+- Confirm the URI starts with `mongodb+srv://` if you copied an SRV connection string.
 
-### Password validation errors
-- Passwords must be at least 6 characters
-- Passwords must match during signup
-- Use strong passwords (mix of letters, numbers, special characters)
+### Existing MySQL data
+- This code change does not automatically migrate old MySQL records into MongoDB.
+- If you need that preserved, the data should be exported from MySQL and imported into the MongoDB collections separately.
 
-## Security Notes
+## Production Notes
 
-⚠️ **Important for Production:**
-
-1. Change `SECRET_KEY` in environment to a random string:
-   ```bash
-   python -c "import secrets; print(secrets.token_hex(32))"
-   ```
-
-2. Use environment variables from `.env` file (not committed to git)
-
-3. Use HTTPS in production
-
-4. Set up proper database user with limited permissions
-
-5. Implement password complexity requirements
-
-6. Add rate limiting to login/signup endpoints
-
-7. Implement email verification
-
-## Advanced Configuration
-
-### Custom Database Host
-If MySQL is running on a different host:
-```bash
-export DB_HOST="192.168.1.100"
-```
-
-### Custom Port
-If MySQL is on a non-standard port, modify `src/database.py`:
-```python
-self.connection = mysql.connector.connect(
-    host=self.host,
-    user=self.user,
-    password=self.password,
-    database=self.database,
-    port=3306  # Change this
-)
-```
-
-### Connection Pooling
-For production, consider adding connection pooling in `src/database.py`
-
-## Next Steps
-
-1. Test the login/signup functionality
-2. Create user accounts
-3. Access the predictor while logged in
-4. Customize user dashboard and features
-
-## Support
-
-For issues with:
-- **MySQL**: Check MySQL documentation
-- **Flask-Login**: Check Flask-Login documentation
-- **Application**: Review logs in console for error messages
-
----
-
-Created for Symptom-based Disease Prediction System
+1. Set a strong random `SECRET_KEY`.
+2. Keep MongoDB credentials in environment variables only.
+3. Restrict your MongoDB network access rules.
+4. Use a managed MongoDB service for production reliability.
