@@ -7,11 +7,9 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 try:
-    from .predict import predict_from_input
     from .database import db
     from .pdf_utils import generate_prediction_report, format_report_datetime, short_report_id
 except Exception:
-    from predict import predict_from_input
     from database import db
     from pdf_utils import generate_prediction_report, format_report_datetime, short_report_id
 import uuid
@@ -52,6 +50,15 @@ def load_user(user_id):
     if user:
         return User(user['id'], user['username'], user['email'], user.get('role', 'user'))
     return None
+
+
+def _get_predict_from_input():
+    """Import the ML pipeline lazily so app startup stays fast on Render."""
+    try:
+        from .predict import predict_from_input
+    except Exception:
+        from predict import predict_from_input
+    return predict_from_input
 
 
 @app.context_processor
@@ -168,6 +175,7 @@ def api_predict():
     if not symptoms:
         return jsonify({'error': 'No symptoms provided'}), 400
     try:
+        predict_from_input = _get_predict_from_input()
         res = predict_from_input(symptoms)
         if getattr(current_user, 'is_authenticated', False):
             user_id = current_user.id
