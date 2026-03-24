@@ -88,6 +88,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/healthz')
+def healthz():
+    return jsonify({'ok': True}), 200
+
+
 @app.route('/api/signup', methods=['POST'])
 def api_signup():
     data = request.get_json() or {}
