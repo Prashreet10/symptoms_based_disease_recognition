@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+{% block title %}Contact — Disease Recognition and Test Recommendation System{% endblock %}
+{% block content %}
+
+<div class="contact-page">
+
+  <!-- Hero Section -->
+  <div class="contact-hero text-center">
+    <div class="c-section-tag mb-4">
+      <i class="fas fa-envelope"></i>GET IN TOUCH
+    </div>
+    <h1 class="contact-headline">
+      We're Here to <span class="contact-highlight">Help You</span>
+    </h1>
+    <p class="contact-sub">
+      Have questions about our AI diagnosis support system? Our team of medical experts
+      and developers is ready to assist you.
+    </p>
+  </div>
+
+  <!-- Contact Cards -->
+  <div class="contact-cards-grid">
+
+    <!-- Email Card -->
+    <div class="contact-card">
+      <div class="contact-card-icon">
+        <i class="fas fa-envelope"></i>
+      </div>
+      <h3 class="contact-card-title">Email Us</h3>
+      <a href="mailto:contact@diseaserecognition.com" class="contact-card-link">
+        contact@diseaserecognition.com
+      </a>
+      <p class="contact-card-desc">Our support team usually responds within 24 hours.</p>
+    </div>
+
+    <!-- Phone Card -->
+    <div class="contact-card">
+      <div class="contact-card-icon">
+        <i class="fas fa-phone-alt"></i>
+      </div>
+      <h3 class="contact-card-title">Call Us</h3>
+      <a href="tel:+911234567890" class="contact-card-link">
+        +91 123 456 7890
+      </a>
+      <p class="contact-card-desc">Available Monday – Friday, 9 AM to 6 PM IST.</p>
+    </div>
+
+    <!-- Location Card -->
+    <div class="contact-card">
+      <div class="contact-card-icon">
+        <i class="fas fa-map-marker-alt"></i>
+      </div>
+      <h3 class="contact-card-title">Our Location</h3>
+      <span class="contact-card-link" style="cursor:default;">Mumbai, Maharashtra, India</span>
+      <p class="contact-card-desc">Visit us at our research &amp; development centre.</p>
+    </div>
+
+  </div>
+
+  <!-- Contact Form -->
+  <div class="contact-form-wrapper">
+    <div class="contact-form-header">
+      <div class="c-section-tag mb-3">
+        <i class="fas fa-paper-plane"></i>SEND A MESSAGE
+      </div>
+      <h2 class="contact-form-title">Drop Us a Line</h2>
+      <p class="contact-form-sub">Fill out the form and we'll get back to you within 24 hours.</p>
+    </div>
+
+    <form id="contactForm" class="contact-form" novalidate>
+      <div class="c-form-row">
+        <div class="form-group-contact">
+          <label for="contact-name">Full Name</label>
+          <div class="c-input-wrap">
+            <i class="fas fa-user"></i>
+            <input type="text" id="contact-name" placeholder="Your full name" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group-contact">
+          <label for="contact-email">Email Address</label>
+          <div class="c-input-wrap">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="contact-email" placeholder="your@email.com" autocomplete="off">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group-contact">
+        <label for="contact-subject">Subject</label>
+        <div class="c-input-wrap">
+          <i class="fas fa-tag"></i>
+          <input type="text" id="contact-subject" placeholder="How can we help you?" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="form-group-contact">
+        <label for="contact-message">Message</label>
+        <div class="c-input-wrap c-textarea-wrap">
+          <i class="fas fa-comment-dots"></i>
+          <textarea id="contact-message" rows="5" placeholder="Write your message here..."></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="contact-submit-btn" id="contactSubmitBtn">
+        <i class="fas fa-paper-plane me-2"></i> Send Message
+      </button>
+
+      <div id="contactSuccess" class="contact-success-msg" style="display:none;">
+        <i class="fas fa-check-circle me-2"></i> Your message has been sent! We'll get back to you soon.
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<style>
+/* ── Page wrapper ───────────────────────────────────────────── */
+.contact-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* ── Hero ───────────────────────────────────────────────────── */
+.contact-hero {
+  padding: 2rem 1rem 0;
+}
+
+.contact-headline {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
+}
+
+.contact-highlight {
+  color: var(--accent);
+}
+
+.contact-sub {
+  max-width: 560px;
+  margin: 0 auto;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+/* ── Section Tag ────────────────────────────────────────────── */
+.c-section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.45rem 1.1rem;
+  border-radius: 50px;
+}
+
+/* ── Cards grid ─────────────────────────────────────────────── */
+.contact-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.contact-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2rem 1.75rem 1.75rem;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cyan top-accent line (always on) */
+.contact-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--teal) 100%);
+}
+
+.contact-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.contact-card-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(14,165,233,0.12) 0%, rgba(6,182,212,0.06) 100%);
+  border: 1.5px solid rgba(14, 165, 233, 0.25);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 1.2rem;
+  margin-bottom: 1.25rem;
+}
+
+.contact-card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.contact-card-link {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.6rem;
+  transition: color 0.2s;
+  word-break: break-all;
+}
+
+.contact-card-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.contact-card-desc {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Form Wrapper ───────────────────────────────────────────── */
+.contact-form-wrapper {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cyan top-accent line on form card */
+.contact-form-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--teal) 100%);
+}
+
+.contact-form-header {
+  margin-bottom: 2rem;
+}
+
+.contact-form-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.contact-form-sub {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+/* ── Form Inputs ────────────────────────────────────────────── */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.c-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.form-group-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.form-group-contact label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.c-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.c-input-wrap i {
+  position: absolute;
+  left: 1rem;
+  color: #94a3b8;
+  font-size: 0.88rem;
+  pointer-events: none;
+  transition: color 0.2s;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.c-textarea-wrap i {
+  top: 1rem;
+  transform: none;
+}
+
+.c-input-wrap input,
+.c-input-wrap textarea {
+  width: 100%;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  outline: none;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+  resize: none;
+}
+
+.c-input-wrap input::placeholder,
+.c-input-wrap textarea::placeholder {
+  color: #94a3b8;
+}
+
+.c-input-wrap input:focus,
+.c-input-wrap textarea:focus {
+  border-color: var(--accent);
+  background: #f0f9ff;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.c-input-wrap:focus-within i {
+  color: var(--accent);
+}
+
+/* ── Submit Button ──────────────────────────────────────────── */
+.contact-submit-btn {
+  align-self: flex-start;
+  background: var(--gradient-primary);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-accent);
+  display: inline-flex;
+  align-items: center;
+}
+
+.contact-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.5);
+}
+
+.contact-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Success message ────────────────────────────────────────── */
+.contact-success-msg {
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #059669;
+  border-radius: 10px;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: c-fadeInUp 0.4s ease;
+}
+
+@keyframes c-fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .c-form-row { grid-template-columns: 1fr; }
+  .contact-form-wrapper { padding: 1.75rem 1.25rem; }
+  .contact-submit-btn { width: 100%; justify-content: center; }
+  .contact-hero { padding: 1rem 0.5rem 0; }
+}
+</style>
+
+<script>
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('contactSubmitBtn');
+    const success = document.getElementById('contactSuccess');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Sending…';
+
+    setTimeout(() => {
+      btn.style.display = 'none';
+      success.style.display = 'flex';
+      this.reset();
+    }, 1200);
+  });
+</script>
+
+{% endblock %}

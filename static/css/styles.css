@@ -7,12 +7,12 @@
 
 :root {
   /* Core Background */
-  --bg: #f0f5fb;
+  --bg: #E7D3BB;
   --bg-secondary: #e8eef7;
 
   /* Navigation & Footer */
-  --nav: #0f172a;
-  --nav-secondary: #1e293b;
+  --nav: #F02F34;
+  --nav-secondary: #F02F34;
 
   /* Cards */
   --card: #ffffff;
@@ -55,8 +55,8 @@
 
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
-  --gradient-nav: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  --gradient-hero: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(6, 182, 212, 0.4) 100%);
+  --gradient-nav: linear-gradient(135deg, #F02F34 0%, #F02F34 100%);
+  --gradient-hero: linear-gradient(135deg, rgba(240, 47, 52, 0.85) 0%, rgba(231, 211, 187, 0.4) 100%);
   --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
 
   /* Radius */

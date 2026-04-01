@@ -88,6 +88,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+
 @app.route('/healthz')
 def healthz():
     return jsonify({'ok': True}), 200
@@ -102,11 +107,23 @@ def api_signup():
     role = data.get('role', 'user').strip()
 
     # Validation
+    import re
     if not username or not email or not password or not role:
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
 
-    if len(password) < 6:
-        return jsonify({'success': False, 'message': 'Password must be at least 6 characters'}), 400
+    # Email must end with @gmail.com
+    if not re.match(r"^[A-Za-z0-9._%+-]+@gmail\.com$", email):
+        return jsonify({'success': False, 'message': 'enter valid email address'}), 400
+
+    # Password: min 8 chars, at least 1 uppercase, 1 lowercase, 1 special char
+    if len(password) < 8:
+        return jsonify({'success': False, 'message': 'Password must be at least 8 characters'}), 400
+    if not re.search(r"[A-Z]", password):
+        return jsonify({'success': False, 'message': 'Password must contain at least one uppercase letter'}), 400
+    if not re.search(r"[a-z]", password):
+        return jsonify({'success': False, 'message': 'Password must contain at least one lowercase letter'}), 400
+    if not re.search(r"[^A-Za-z0-9]", password):
+        return jsonify({'success': False, 'message': 'Password must contain at least one special character'}), 400
 
     result = db.register_user(username, email, password, role)
     return jsonify(result), 200 if result['success'] else 400
