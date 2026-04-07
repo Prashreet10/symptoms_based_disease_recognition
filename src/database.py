@@ -109,7 +109,7 @@ class Database:
         self.init_db()
 
     def init_db(self):
-        """Initialize collections and indexes."""
+        """Initialize collections and indexes. Also ensures a default admin user exists."""
         try:
             users = self._users()
             diseases = self._diseases()
@@ -123,6 +123,26 @@ class Database:
             history.create_index([("report_id", ASCENDING)], unique=True)
             history.create_index([("user_id", ASCENDING), ("prediction_date", DESCENDING)])
             print("MongoDB indexes initialized successfully")
+
+            # Ensure default admin user exists
+            default_admin_username = "admin"
+            default_admin_email = "admin@admin.com"
+            default_admin_password = "admin123"
+            admin_user = users.find_one({"username_lower": default_admin_username})
+            if not admin_user:
+                from werkzeug.security import generate_password_hash
+                users.insert_one({
+                    "username": default_admin_username,
+                    "username_lower": default_admin_username,
+                    "email": default_admin_email,
+                    "email_lower": default_admin_email,
+                    "password": generate_password_hash(default_admin_password),
+                    "role": "admin",
+                    "created_at": datetime.utcnow(),
+                })
+                print("Default admin user created: admin / admin123")
+            else:
+                print("Default admin user already exists.")
         except PyMongoError as e:
             print(f"Error initializing MongoDB: {e}")
 

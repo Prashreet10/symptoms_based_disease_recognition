@@ -1,24 +1,36 @@
 async function postPredict(payload) {
-  try {
-    const res = await fetch('/api/predict', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify(payload)
-    });
-    
-    if (!res.ok) {
+  const maxAttempts = 3;
+  const retryDelay = 800; // ms
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        let data;
+        try {
+          data = await res.json();
+        } catch (_) {
+          data = {};
+        }
+        const errorMsg = data.error || `HTTP ${res.status}: Prediction failed`;
+        throw new Error(errorMsg);
+      }
       const data = await res.json();
-      const errorMsg = data.error || `HTTP ${res.status}: Prediction failed`;
-      throw new Error(errorMsg);
+      return data;
+    } catch (error) {
+      lastError = error;
+      console.error(`Fetch error attempt ${attempt}:`, error);
+      if (attempt < maxAttempts) {
+        await new Promise(r => setTimeout(r, retryDelay));
+      }
     }
-    
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error('Fetch error details:', error);
-    throw error;
   }
+  throw lastError;
 }
 
 // Add smooth animations

@@ -58,6 +58,9 @@ def admin_dashboard():
     project_root = _project_root()
     dataset_path = get_dataset_path(project_root)
     severity_path = get_severity_path(project_root)
+    
+    # Add this for add_admin page link
+    # (no logic needed here, just for context)
 
     stats = get_dataset_stats(dataset_path, severity_path)
     diseases = get_all_dataset_diseases(dataset_path)
@@ -120,6 +123,40 @@ def add_disease():
         return redirect(url_for('admin.admin_dashboard'))
 
     return render_template('admin/add_disease.html', existing_symptoms=existing_symptoms)
+
+
+# ── Add Admin ───────────────────────────────────────────────────────────────
+@admin_bp.route('/add_admin', methods=['GET', 'POST'])
+@login_required
+def add_admin():
+    if _admin_only():
+        flash('Access denied: Admins only.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    if request.method == 'POST':
+        username = (request.form.get('username') or '').strip()
+        email = (request.form.get('email') or '').strip()
+        password = (request.form.get('password') or '').strip()
+        errors = []
+        if not username:
+            errors.append('Username is required.')
+        if not email:
+            errors.append('Email is required.')
+        if not password:
+            errors.append('Password is required.')
+        if errors:
+            for err in errors:
+                flash(err, 'danger')
+            return render_template('admin/add_admin.html')
+        # Register new admin
+        result = db.register_user(username, email, password, role="admin")
+        if result.get('success'):
+            flash('New admin account created successfully!', 'success')
+            return redirect(url_for('admin.admin_dashboard'))
+        else:
+            flash(result.get('message', 'Failed to create admin.'), 'danger')
+            return render_template('admin/add_admin.html')
+    return render_template('admin/add_admin.html')
 
 
 # ── API endpoints ─────────────────────────────────────────────────────────────

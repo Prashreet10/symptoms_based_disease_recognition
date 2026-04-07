@@ -83,15 +83,7 @@
           <input type="password" class="form-control" id="signup-password-confirm" name="password_confirm" placeholder="Repeat password" required>
         </div>
 
-        <div class="mb-4">
-          <label for="signup-role" class="form-label">
-            <i class="fas fa-user-tag me-1" style="color: var(--accent);"></i>Role
-          </label>
-          <select class="form-control" id="signup-role" name="role" required>
-            <option value="user" selected>User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
+        <!-- Role selection removed as per request -->
 
         <div id="signup-error" class="alert alert-danger" style="display: none;"></div>
         <div id="signup-success" class="alert alert-success" style="display: none;"></div>
@@ -320,11 +312,10 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
   }
 
   try {
-    const role = document.getElementById('signup-role').value;
     const response = await fetch('/api/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password, role })
+      body: JSON.stringify({ username, email, password })
     });
 
     const data = await response.json();
